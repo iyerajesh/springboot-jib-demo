@@ -1,0 +1,51 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.4.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+    id 'com.google.cloud.tools.jib' version '2.1.0'
+}
+
+group = 'io.xylia.platform.demo'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.11'
+targetCompatibility = '1.11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+jib {
+    from {
+        image = 'openjdk:12-alpine'
+        credHelper = 'gcloud'
+    }
+    to {
+        image = 'gcr.io/xylia-platform/springboot-jib-demo'
+        tags = ['1.0.5', 'latest']
+    }
+    container {
+        jvmFlags = ['-Xms512m', '-XX:TieredStopAtLevel=1', '-Dspring.main.lazy-initialization=true']
+        ports = ['8080']
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

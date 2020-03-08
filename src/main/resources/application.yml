@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: springboot-jib-demo
+    port: 8080
+  main:
+    lazy-initialization: true
